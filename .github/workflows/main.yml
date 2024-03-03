@@ -35,6 +35,7 @@ jobs:
           username: root
           key: ${{ secrets.SERVER_SECRET_KEY }}
           script: |
+            rm -rf kubernetes_server
             git clone https://jyldyz0610:${{ secrets.GITHUBTOKEN }}@github.com/jyldyz0610/kubernetes_server.git
             cd kubernetes_server/kubernetes_hetzner
             for i in $(ls); do
