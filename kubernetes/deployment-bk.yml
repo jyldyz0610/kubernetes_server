@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: jyldyz0610/cmsbackend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 443
+          env:
+            - name: FRONTEND_URL
+              value: "https://knowledge.app.de"
+            - name: CLIENT_ID
+              value: "800923981105-jrullt5malhpoc0agmlg9v0vme6rn80m.apps.googleusercontent.com"  
+            - name: CLIENT_SECRET
+              value: "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"
+            - name: DB_USER
+              value: "meta"
+            - name: DB_PASSWORD
+              value: "meta2024!"
+            - name: DB_HOST
+              value: "database"
+            - name: DB_NAME
+              value: "meta_db"
+            - name: ENABLE_DEBUG
+              value: "TRUE"
+            - name: JWT_SECRET
+              value: "meta11"
+            - name: DB_PORT
+              value: "3306"

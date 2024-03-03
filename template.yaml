@@ -1,0 +1,176 @@
+# Beispiel CloudFormation-Template (template.yaml)
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template for VPC, IGW, Public Subnet, EC2 Instance, Security Group, and S3 Bucket.
+Parameters:
+  
+  VpcCidrBlock:
+    Type: String
+    Description: 'CIDR block for the VPC. Default is 14.0.0.0/16.'
+    Default: '14.0.0.0/16'
+  PublicSubnetCidrBlock:
+    Type: String
+    Description: 'CIDR block for the public subnet. Default is 14.0.1.0/24.'
+    Default: '14.0.1.0/24'
+
+Resources:
+
+  MyVPC:
+    Type: "AWS::EC2::VPC"
+    Properties:
+      CidrBlock: "14.0.0.0/16"
+      Tags:
+        - Key: Name
+          Value: VPC22
+
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: 'Name'
+          Value: 'MyInternetGateway22'
+
+  AttachGateway:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref MyVPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: !Ref PublicSubnetCidrBlock
+      AvailabilityZone: !Select [0, !GetAZs 'eu-central-1']  # Select the first availability zone in eu-central-1 region
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: 'Name'
+          Value: 'PublicSubnet22'
+
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: 'Name'
+          Value: 'PublicRouteTable22'
+
+  InternetRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  MySecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Allow incoming traffic on port 8000, SSH, HTTP, and HTTPS"
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: 8000
+          ToPort: 8000
+          IpProtocol: tcp
+        - CidrIp: 0.0.0.0/0
+          FromPort: 80
+          ToPort: 80
+          IpProtocol: tcp
+        - CidrIp: 0.0.0.0/0
+          FromPort: 443
+          ToPort: 443
+          IpProtocol: tcp
+        - CidrIp: 0.0.0.0/0
+          FromPort: 22
+          ToPort: 22
+          IpProtocol: tcp
+
+  MyKeyPair:
+    Type: 'AWS::EC2::KeyPair'
+    Properties:
+      KeyName: 'key22.pem'  # Keyname
+  
+  MyEC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      InstanceType: "t2.micro"
+      ImageId: "ami-0faab6bdbac9486fb"  # Ubuntu 22.04
+      KeyName: !Ref MyKeyPair  # Reference key pair
+      SubnetId: !Ref PublicSubnet
+      SecurityGroupIds:
+        - !GetAtt MySecurityGroup.GroupId      
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          sudo apt update -y
+          sudo apt install apache2 curl -y
+          sudo apt install ca-certificates fonts-liberation libasound2 libatk-bridge2.0-0 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgbm1 libgcc1 libglib2.0-0 libgtk-3-0 libnspr4 libnss3 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 lsb-release wget xdg-utils -y
+          html_content="<!DOCTYPE html>
+          <html lang=\"en\">
+          <head>
+              <meta charset=\"UTF-8\">
+              <meta http-equiv=\"refresh\" content=\"0;url=/csm-start-login/start.html\">
+              <title>Weiterleitung</title>
+          </head>
+          <body>
+              <p>Falls die Weiterleitung nicht funktioniert, klicken Sie <a href=\"/csm-start-login/start.html\">hier</a>.</p>
+          </body>
+          </html>"
+
+          sudo echo "$html_content" > /var/www/html/index.html
+          curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+          sudo apt install nodejs -y
+
+          sudo apt update
+          sudo apt install mysql-server -y
+          sudo systemctl start mysql.service
+          #sudo mysql_secure_installation --use-default
+
+          git config --global user.name "erdal2021"
+          git config --global user.email "erdal.erdogan@t-online.de"
+          git init
+
+          git clone https://erdal2021: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@github.com/erdal2021/ProjektCMS.git
+          git checkout feature/bugfixes
+          cd ProjektCMS/
+          sudo cp -R kb-frontend csm-start-login /var/www/html/
+          cd kb-backend
+          sudo mysql -u root < sql_scripts/99_cleanup_db.sql
+          sudo mysql -u root < sql_scripts/01_setup_db.sql
+          sudo mysql -u root < sql_scripts/02_setup_table.sql
+          sudo mysql -u root < sql_scripts/03_insert_data.sql
+          sudo npm install --save
+          #sudo sh reset-db.sh -y
+          sudo sh setup-env.sh
+          sudo npm install pm2 -g
+          sudo pm2 start node start src/app.js
+          sudo pm2 save
+          sudo apt update -y
+          sudo apt upgrade -y
+          #sudo reboot
+          #sudo node src/app.js &
+      Tags:
+        - Key: Name
+          Value: EC2Instance22
+
+  MyBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: ee-cf-bucket-2
+
+Outputs:
+  VPCId:
+    Description: "VPC ID"
+    Value: !Ref MyVPC
+
+  EC2InstanceId:
+    Description: "EC2 Instance ID"
+    Value: !Ref MyEC2Instance
+
+    

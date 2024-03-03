@@ -1,0 +1,35 @@
+# Use a base image for building the backend
+FROM node:lts-alpine as build-stage
+
+# Set working directory
+WORKDIR /app
+
+# Copy package.json and lock file
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install --only=production
+
+# Copy the rest of the application files
+COPY . .
+
+# Use a lightweight image for serving the backend
+FROM node:lts-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Install git and other necessary tools
+RUN npm rebuild bcrypt --build-from-source
+
+# Copy built files from the builder stage
+COPY --from=build-stage /app /app
+
+# Expose port 3000
+EXPOSE 443
+
+# Command to run the backend server
+CMD ["node", "./server.js"]
+
+
+

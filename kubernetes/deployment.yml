@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: projectcms
+  labels:
+    app: projectcms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: projectcms
+  template:
+    metadata:
+      labels:
+        app: projectcms
+    spec:
+      hostAliases:
+      - ip: "10.103.138.154"
+        hostnames:
+          - "knowledge.backend.de"
+      containers:
+      - name: projectcms
+        image: jyldyz0610/cmsfrontend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        - name: REACT_APP_API_BASE_URL
+          value: "https://knowledge.backend.de"
+      restartPolicy: Always
+
+

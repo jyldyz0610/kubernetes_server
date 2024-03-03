@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cms-frontend
+  annotations:
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    Access-Control-Allow-Origin: https://knowledge.app.de
+
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: knowledge.app.de
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: projectcms
+            port:
+              number: 443

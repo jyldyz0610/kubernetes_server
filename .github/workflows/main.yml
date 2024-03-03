@@ -1,0 +1,45 @@
+name: Deploy Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.REGISTRY_TOKEN }}" | docker login -u "${{ secrets.REGISTRY_USER }}" --password-stdin
+
+      - name: Build Docker image
+        run: |
+          docker build -t jyldyz0610/cmsbackend:latest -f Dockerfile.backend .
+          docker push jyldyz0610/cmsbackend:latest
+          docker build -t jyldyz0610/cmsdatabase:latest -f Dockerfile.db .
+          docker push jyldyz0610/cmsdatabase:latest
+          docker build -t jyldyz0610/cmsfrontend:latest -f Dockerfile.frontend .
+          docker push jyldyz0610/cmsfrontend:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH and Docker setup
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_PUBLIC_IP }}
+          username: root
+          key: ${{ secrets.SERVER_SECRET_KEY }}
+          script: 
+            git clone https://jyldyz0610:${{ secrets.GITHUBTOKEN }}@github.com/jyldyz0610/kubernetes_server
+            cd kubernetes_hetzner; for i in $(ls); do echo $i; kubectl apply -f $i; done;|
+            kubectl get pods
+            kubectl get ingress
+            
+
+
+      

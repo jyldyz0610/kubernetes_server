@@ -1,0 +1,3 @@
+DROP USER IF EXISTS 'meta'@'localhost';
+FLUSH PRIVILEGES;
+DROP DATABASE IF EXISTS meta_db;

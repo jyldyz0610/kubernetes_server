@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cms-frontend
+  annotations:
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    Access-Control-Allow-Origin: https://frontend.devops-knowledge.de
+
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+      - frontend.devops-knowledge.de
+      secretName: wildcards-tls
+  rules:
+  - host: frontend.devops-knowledge.de
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: projectcms
+            port:
+              number: 443

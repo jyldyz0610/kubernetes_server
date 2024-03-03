@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cms-backend
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+      - backend.devops-knowledge.de
+      secretName: wildcards-tls
+  rules:
+  - host: backend.devops-knowledge.de
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: backend
+            port:
+              number: 443

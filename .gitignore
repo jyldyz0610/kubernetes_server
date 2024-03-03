@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.zip
+.DS_Store
+backend/env/*
+node_modules
+.env
+src/env
+.htaccess
+sql_scripts1/
+cloudformation

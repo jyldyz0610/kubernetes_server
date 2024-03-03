@@ -1,0 +1,19 @@
+# Use the official MySQL image as the base image
+FROM mysql:latest
+
+# Set environment variables (optional)
+ENV MYSQL_ROOT_PASSWORD=meta2023! \
+    MYSQL_DATABASE=meta_db \
+    MYSQL_USER=meta \
+    MYSQL_PASSWORD=meta2024!
+
+# Copy the setup script into the container
+COPY sql_scripts/setup_db.sql /docker-entrypoint-initdb.d/
+
+# COPY reset-db.sh /docker-entrypoint-initdb.d/
+
+# Grant execute permission to the setup script
+# RUN chmod +x /docker-entrypoint-initdb.d/reset-db.sh
+
+# Expose the MySQL port
+EXPOSE 3306
