@@ -23,6 +23,8 @@ spec:
         env:
         - name: REACT_APP_API_BASE_URL
           value: "https://backend.devops-knowledge.de"
+        - name: TEST 
+          value: "test"
       restartPolicy: Always
 
 
