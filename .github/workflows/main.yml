@@ -34,12 +34,15 @@ jobs:
           host: ${{ secrets.SERVER_PUBLIC_IP }}
           username: root
           key: ${{ secrets.SERVER_SECRET_KEY }}
-          script: 
+          script: |
             git clone https://jyldyz0610:${{ secrets.GITHUBTOKEN }}@github.com/jyldyz0610/kubernetes_server.git
-            cd kubernetes_hetzner; for i in $(ls); do echo $i; kubectl apply -f $i; done;|
+            cd kubernetes_hetzner
+            for i in $(ls); do
+              echo $i
+              kubectl apply -f $i
+            done
             kubectl get pods
             kubectl get ingress
-            
 
 
       
