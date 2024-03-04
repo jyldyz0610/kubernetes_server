@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: jyldyz0610/cmsbackend:latest
+          image: jyldyz0610/backend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 443

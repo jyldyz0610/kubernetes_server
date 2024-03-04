@@ -1,38 +1,4 @@
-// import React from "react";
-// import "./App.css"
-// import Home from "./Home";
-// import About from "./About";
-// import Addlink from "./Addlink";
-// import Links from "./Links";
-// import Login from "./Login";
-// import Register from "./Register";
-// import Header from "./Header";
-// import Footer from "./Footer";
-// import MainContainer from "./MainContainer";
-// import { Routes, Route } from "react-router-dom";
-
-// function App() {
-//   return (
-//      <div className="App">
-//        <Header />
-//        <MainContainer>
-//          <Routes>
-//            <Route path='/' element={<Home />} />
-//            <Route path='about' element={<About />} />
-//            <Route path='addlink' element={<Addlink />} />
-//            <Route path='links' element={<Links />} />
-//            <Route path='login' element={<Login />} />
-//            <Route path='register' element={<Register />} />
-//          </Routes>
-//        </MainContainer>
-//        <Footer />
-//      </div>
-//    );
-//  }
- 
-// export default App;
 import React from "react";
-import "./App.css"
 import Home from "./Home";
 import About from "./About";
 import Login from "./Login";
@@ -45,22 +11,35 @@ import MainContainer from "./MainContainer";
 import { Routes, Route } from "react-router-dom";
 
 function App() {
- return (
-    <div className="App">
-       <Header />
-       <MainContainer>
-         <Routes>
-        <Route path='/' element={ <Home/> } />
-        <Route path='about' element={ <About/> } />
-        <Route path='login' element={ <Login/> } />
-        <Route path='myspace' element={ <MeinBereich/> } />
-        <Route path='links' element={ <Links/> } />
-        <Route path='addlink' element={ <Addlink/> } />
+  const appStyles = {
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
+    backgroundImage: 'url(https://knowledge.app.de/img4.jpg)',
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+  };
+
+  const footerStyles = {
+    flexShrink: 0,
+  };
+
+  return (
+    <div className="App" style={appStyles}>
+      <Header />
+      <MainContainer>
+        <Routes>
+          <Route path='/' element={<Home/>} />
+          <Route path='about' element={<About/>} />
+          <Route path='login' element={<Login/>} />
+          <Route path='myspace' element={<MeinBereich/>} />
+          <Route path='links' element={<Links/>} />
+          <Route path='addlink' element={<Addlink/>} />
         </Routes>
-       </MainContainer>
-       <Footer />
+      </MainContainer>
+      <Footer style={footerStyles} />
     </div>
   );
 }
 
-export default App
+export default App;

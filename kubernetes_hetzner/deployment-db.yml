@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: database
-          image: jyldyz0610/cmsdatabase:v2
+          image: jyldyz0610/database:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 3306

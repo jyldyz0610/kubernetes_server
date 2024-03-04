@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: projectcms
-        image: jyldyz0610/cmsfrontend:latest
+        image: jyldyz0610/frontend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 3000

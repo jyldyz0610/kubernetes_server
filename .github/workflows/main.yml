@@ -17,12 +17,12 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t jyldyz0610/cmsbackend:latest -f backend/Dockerfile.backend backend
-          docker push jyldyz0610/cmsbackend:latest
-          docker build -t jyldyz0610/cmsdatabase:latest -f backend/Dockerfile.db backend
-          docker push jyldyz0610/cmsdatabase:latest
-          docker build -t jyldyz0610/cmsfrontend:latest -f frontend/Dockerfile.frontend frontend
-          docker push jyldyz0610/cmsfrontend:latest
+          docker build -t jyldyz0610/backend:latest -f backend/Dockerfile.backend backend
+          docker push jyldyz0610/backend
+          docker build -t jyldyz0610/database:latest -f backend/Dockerfile.db backend
+          docker push jyldyz0610/database:latest
+          docker build -t jyldyz0610/frontend:latest -f frontend/Dockerfile.frontend frontend
+          docker push jyldyz0610/frontend:latest
 
   deploy:
     needs: build
