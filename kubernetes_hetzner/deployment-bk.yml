@@ -22,9 +22,9 @@ spec:
             - name: FRONTEND_URL
               value: "https://frontend.devops-knowledge.de"
             - name: CLIENT_ID
-              value: "800923981105-jrullt5malhpoc0agmlg9v0vme6rn80m.apps.googleusercontent.com"  
+              value: "853117883137-rnjs8as6ad32jcv61phal2pgd4tve2a1.apps.googleusercontent.com"  
             - name: CLIENT_SECRET
-              value: "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"
+              value: "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"
             - name: DB_USER
               value: "meta"
             - name: DB_PASSWORD
