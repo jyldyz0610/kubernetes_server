@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS users (
   salt VARCHAR(255),
   role ENUM('user', 'admin') DEFAULT 'user',
   googleId VARCHAR(255),
-  secret VARCHAR(255)
+  secret VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS links (

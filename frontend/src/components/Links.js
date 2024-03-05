@@ -10,6 +10,9 @@ const LinksTable = () => {
   const [sortBy, setSortBy] = useState('');
   const [sortOrder, setSortOrder] = useState('asc');
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track user login state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(7); // Number of items per page
+  const maxPagesToShow = 6; // Maximum number of page buttons to show
 
   useEffect(() => {
     const token = sessionStorage.getItem('userToken');
@@ -121,7 +124,25 @@ const LinksTable = () => {
       link.ogDescription.toLowerCase().includes(keyword)
     );
     setFilteredLinks(filtered);
+    setCurrentPage(1); // Reset current page to 1 when filtering
   };
+
+  // Calculate total number of pages
+  const totalPages = Math.ceil(filteredLinks.length / itemsPerPage);
+
+  // Calculate index of the first and last item to be displayed
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  // Get current items to be displayed
+  const currentItems = filteredLinks.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Calculate which pages to show
+  const startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+  const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+  const pagesToShow = [...Array(endPage - startPage + 1).keys()].map(i => startPage + i);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div>
@@ -133,16 +154,16 @@ const LinksTable = () => {
             <th style={{ color: "silver" }} onClick={() => handleSort('id')}>ID</th>
             <th style={{ cursor: 'pointer' }} onClick={() => handleSort('category')}>Kategorie</th>
             <th style={{ cursor: 'pointer' }} onClick={() => handleSort('link')}>Link</th>
-            <th style={{ cursor: 'pointer' }} onClick={() => handleSort('ogTitle')}>Title</th>
+            <th style={{ cursor: 'pointer' }} onClick={() => handleSort('ogTitle')}>Titel</th>
             <th style={{ cursor: 'pointer' }} onClick={() => handleSort('ogDescription')}>Beschreibung</th>
             <th>Bild</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {filteredLinks.map((link, index) => (
-            <tr key={index}> {/* Hier wird der Index als fiktive ID verwendet */}
-              <td>{index + 1}</td> {/* Fiktive ID basierend auf dem Index */}
+          {currentItems.map((link, index) => (
+            <tr key={index}>
+              <td>{index + 1}</td>
               <td>{editIndex === index ? <input type="text" name="category" value={editedLink.category} onChange={handleInputChange} /> : link.category}</td>
               <td>{editIndex === index ? <input type="text" name="link" value={editedLink.link} onChange={handleInputChange} /> : <a href={link.link} target='blank'>{link.link}</a>}</td>
               <td>{editIndex === index ? <input type="text" name="ogTitle" value={editedLink.ogTitle} onChange={handleInputChange} /> : link.ogTitle}</td>
@@ -151,11 +172,11 @@ const LinksTable = () => {
                 {editIndex === index ?
                   <input type="text" name="ogImage" value={editedLink.ogImage} onChange={handleInputChange} />
                   :
-                  link.ogImage && <img src={link.ogImage} alt="Bild" style={{ width: '150px', height: '100px' }} />
+                  link.ogImage && <img src={link.ogImage} alt="Bild" style={{ width: '80px', height: '40px' }} />
                 }
               </td>
               <td>
-                {isLoggedIn && ( // Render actions only if user is logged in
+                {isLoggedIn && (
                   editIndex === index ? (
                     <>
                       <button className="btn btn-success" onClick={handleUpdate}>Speichern</button>
@@ -173,6 +194,19 @@ const LinksTable = () => {
           ))}
         </tbody>
       </table>
+      <ul className="pagination">
+        <li className={currentPage === 1 ? 'page-item disabled' : 'page-item'}>
+          <button className="page-link" onClick={() => paginate(1)}>Vorherige</button>
+        </li>
+        {pagesToShow.map(page => (
+          <li key={page} className={currentPage === page ? 'page-item active' : 'page-item'}>
+            <button className="page-link" onClick={() => paginate(page)}>{page}</button>
+          </li>
+        ))}
+        <li className={currentPage === totalPages ? 'page-item disabled' : 'page-item'}>
+          <button className="page-link" onClick={() => paginate(totalPages)}>Nächste</button>
+        </li>
+      </ul>
     </div>
   );
 };
