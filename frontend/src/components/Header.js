@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-// import GoogleSignInButton from './GoogleSignInButton';
-import Logout from './Logout';
+import { useNavigate } from "react-router-dom";
+// import Logout from './Logout';
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLogoutMessage, setShowLogoutMessage] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = sessionStorage.getItem('userToken');
@@ -11,6 +13,25 @@ const Header = () => {
       setIsLoggedIn(true);
     }
   }, []);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('userToken');
+    setIsLoggedIn(false);
+    setShowLogoutMessage(true);
+  
+    setTimeout(() => {
+      // Überprüfe, ob das Element noch im DOM ist
+      if (showLogoutMessage) {
+        setShowLogoutMessage(false);
+      }
+      navigate("/links");
+    }, 3000);
+  };
+
+  const handleLogin = () => {
+    sessionStorage.setItem('userToken', 'yourTokenHere'); // Hier setzen Sie den Token, den Sie vom Server erhalten haben
+    setIsLoggedIn(true);
+  };
 
   return (
     <header className="sticky-header">
@@ -39,25 +60,26 @@ const Header = () => {
               </li>
             </ul>
             <ul className="navbar-nav ms-auto">
-              {!isLoggedIn ? (
-                <>
-                  <li className="nav-item">
-                  <a className="nav-link" href={`${process.env.REACT_APP_API_BASE_URL}/auth/google`}><b>Login</b></a>
-
-                  </li>
-                  <li className="nav-item">
-                    {/* <Logout /> */}
-                  </li>
-                </>
+              {isLoggedIn ? (
+                <li className="nav-item">
+                  <button className="nav-link" onClick={handleLogout}><b>Logout</b></button>
+                </li>
               ) : (
                 <li className="nav-item">
-                  <Logout />
+                  <a className="nav-link" href={`${process.env.REACT_APP_API_BASE_URL}/auth/google`} onClick={handleLogin}><b>Login</b></a>
                 </li>
               )}
             </ul>
           </div>
         </div>
       </nav>
+      {/* Bootstrap-Meldung für den erfolgreichen Logout */}
+      {showLogoutMessage && (
+        <div className="alert alert-success alert-dismissible fade show d-flex justify-content-center" role="alert">
+          You have been logged out successfully!
+          <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      )}
     </header>
   );
 }
