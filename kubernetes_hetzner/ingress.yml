@@ -4,16 +4,16 @@ metadata:
   name: cms-frontend
   annotations:
     nginx.ingress.kubernetes.io/cors-allow-origin: "*"
-    Access-Control-Allow-Origin: https://devops-knowledge.de
+    Access-Control-Allow-Origin: https://start.devops-knowledge.de
 
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
-      - devops-knowledge.de
+      - start.devops-knowledge.de
       secretName: wildcards-tls
   rules:
-  - host: devops-knowledge.de
+  - host: start.devops-knowledge.de
     http:
       paths:
       - path: /
