@@ -21,6 +21,8 @@ spec:
           env:
             - name: FRONTEND_URL
               value: "https://frontend.devops-knowledge.de"
+            - name: BACKEND_URL
+              value: "https://backend.devops-knowledge.de"
             - name: CLIENT_ID
               value: "853117883137-rnjs8as6ad32jcv61phal2pgd4tve2a1.apps.googleusercontent.com"  
             - name: CLIENT_SECRET
