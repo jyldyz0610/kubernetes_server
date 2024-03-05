@@ -25,7 +25,7 @@ function MeinBereich() {
     const fetchUserData = async () => {
       const token = sessionStorage.getItem('userToken');
       try {
-        const response = await fetch('http://localhost:3001/userData', {
+        const response = await fetch(process.env.REACT_APP_API_BASE_URL +'/userData', {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -52,7 +52,7 @@ function MeinBereich() {
     const fetchUserLinks = async () => {
       try {
         const token = sessionStorage.getItem('userToken');
-        const response = await axios.get('http://localhost:3001/userLinks', {
+        const response = await axios.get(process.env.REACT_APP_API_BASE_URL +'/userLinks', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
