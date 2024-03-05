@@ -24,9 +24,9 @@ spec:
             - name: BACKEND_URL
               value: "https://backend.devops-knowledge.de"
             - name: CLIENT_ID
-              value: "853117883137-rnjs8as6ad32jcv61phal2pgd4tve2a1.apps.googleusercontent.com"  
+              value: "853117883137-7ofscqj6kojujukq0hpeenbg05id7egp.apps.googleusercontent.com"  
             - name: CLIENT_SECRET
-              value: "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"
+              value: "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"
             - name: DB_USER
               value: "meta"
             - name: DB_PASSWORD
