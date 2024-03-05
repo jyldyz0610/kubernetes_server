@@ -149,6 +149,6 @@ To start the database Docker container:
     docker-compose up
     ```
 
-Öffnen Sie im Browser `https://start.devops-knowledge.de/`, um auf die Anwendung zuzugreifen.
+Öffnen Sie im Browser `knowledge.app.local`, um auf die Anwendung zuzugreifen.
 
    test test test

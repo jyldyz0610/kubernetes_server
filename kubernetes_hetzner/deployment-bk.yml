@@ -20,7 +20,7 @@ spec:
             - containerPort: 443
           env:
             - name: FRONTEND_URL
-              value: "https://start.devops-knowledge.de"
+              value: "https://frontend.devops-knowledge.de"
             - name: BACKEND_URL
               value: "https://backend.devops-knowledge.de"
             - name: CLIENT_ID

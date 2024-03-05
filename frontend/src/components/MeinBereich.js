@@ -11,8 +11,6 @@ function MeinBereich() {
   const [editIndex, setEditIndex] = useState(null);
   const [editedLink, setEditedLink] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track user login state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [linksPerPage] = useState(7);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -27,7 +25,7 @@ function MeinBereich() {
     const fetchUserData = async () => {
       const token = sessionStorage.getItem('userToken');
       try {
-        const response = await fetch(process.env.REACT_APP_API_BASE_URL + '/userData', {
+        const response = await fetch(process.env.REACT_APP_API_BASE_URL +'/userData', {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -125,14 +123,6 @@ function MeinBereich() {
     }
   };
 
-  // Paginate function
-  const indexOfLastLink = currentPage * linksPerPage;
-  const indexOfFirstLink = indexOfLastLink - linksPerPage;
-  const currentLinks = userLinks.slice(indexOfFirstLink, indexOfLastLink);
-
-  // Change page
-  const paginate = pageNumber => setCurrentPage(pageNumber);
-
   return (
     <div>
       <h2>Mein Bereich</h2>
@@ -151,12 +141,12 @@ function MeinBereich() {
           </tr>
         </thead>
         <tbody>
-          {currentLinks.map((link, index) => (
+          {userLinks.map((link, index) => (
             <tr key={index}>
               <td>{editIndex === index ? <input type="text" name="category" value={editedLink.category || ''} onChange={handleInputChange} /> : link.category}</td>
               <td>{editIndex === index ? <input type="text" name="link" value={editedLink.link || ''} onChange={handleInputChange} /> : <a href={link.link} target='_blank' rel='noreferrer'>{link.link}</a>}</td>
               <td>{editIndex === index ? <input type="text" name="title" value={editedLink.title || ''} onChange={handleInputChange} /> : link.title}</td>
-              <td>{editIndex === index ? <input type="text" name="ogImage" value={editedLink.ogImage || ''} onChange={handleInputChange} /> : <img src={link.ogImage} alt="Bild" style={{ width: '80px', height: '40px' }} />}</td>
+              <td>{editIndex === index ? <input type="text" name="ogImage" value={editedLink.ogImage || ''} onChange={handleInputChange} /> : <img src={link.ogImage} alt="Bild" style={{ width: '100px', height: '100px' }} />}</td>
               <td>
                 {isLoggedIn && (
                   editIndex === index ? (
@@ -176,47 +166,8 @@ function MeinBereich() {
           ))}
         </tbody>
       </table>
-      <Pagination
-        linksPerPage={linksPerPage}
-        totalLinks={userLinks.length}
-        paginate={paginate}
-        currentPage={currentPage}
-      />
     </div>
   );
 }
-
-// Pagination component
-const Pagination = ({ linksPerPage, totalLinks, paginate, currentPage }) => {
-  const pageNumbers = [];
-
-  for (let i = 1; i <= Math.ceil(totalLinks / linksPerPage); i++) {
-    pageNumbers.push(i);
-  }
-
-  return (
-    <nav>
-      <ul className='pagination'>
-        <li className={currentPage === 1 ? 'page-item disabled' : 'page-item'}>
-          <button className='page-link' onClick={() => paginate(currentPage - 1)}>
-            Vorherige
-          </button>
-        </li>
-        {pageNumbers.map(number => (
-          <li key={number} className={number === currentPage ? 'page-item active' : 'page-item'}>
-            <button onClick={() => paginate(number)} className='page-link'>
-              {number}
-            </button>
-          </li>
-        ))}
-        <li className={currentPage === Math.ceil(totalLinks / linksPerPage) ? 'page-item disabled' : 'page-item'}>
-          <button className='page-link' onClick={() => paginate(currentPage + 1)}>
-            Nächste
-          </button>
-        </li>
-      </ul>
-    </nav>
-  );
-};
 
 export default MeinBereich;

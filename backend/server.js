@@ -12,13 +12,11 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const bcrypt = require('bcryptjs');
-const https = require('https')
-const http = require('http')
+// Initialisierung von Express und SQLite-Datenbank
+const app = express();
+// const db = new sqlite3.Database('./database.db');
 const { link } = require('fs');
 const { error } = require('console');
-// Initialisierung von Express
-const app = express();
-
 
 // Konfiguration von express-session
 app.use(session({
@@ -91,13 +89,13 @@ passport.use(new GoogleStrategy({
 function(accessToken, refreshToken, profile, cb) {
   cnx.query("SELECT * FROM users WHERE googleId = ?", [profile.id], (err, rows) => {
       if (!rows.length) {
-          const insertUserQuery = "INSERT INTO users (username, name, googleId, created_at) VALUES (?, ?, ?, NOW())"; // NOW() setzt das aktuelle Datum und die aktuelle Uhrzeit
+          const insertUserQuery = "INSERT INTO users (username, name, googleId) VALUES (?, ?, ?)";
           cnx.query(insertUserQuery, [profile.displayName, profile.displayName, profile.id], (err, result) => {
               if (err) throw err;
 
               const userId = result.insertId;
-              const insertProfileQuery = "INSERT INTO profiles (user_id, full_name) SELECT ?, ? FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM profiles WHERE user_id = ?)";
-              cnx.query(insertProfileQuery, [userId, profile.displayName, userId], (err, profileResult) => {
+              const insertProfileQuery = "INSERT INTO profiles (user_id, full_name) VALUES (?, ?)";
+              cnx.query(insertProfileQuery, [userId, profile.displayName], (err, profileResult) => {
                   if (err) throw err;
 
                   // Wenn alles erfolgreich war, können wir die neu eingefügten Daten abrufen
@@ -112,7 +110,6 @@ function(accessToken, refreshToken, profile, cb) {
       }
   });
 }
-
 
 ));
 
@@ -320,34 +317,21 @@ async function checkExistingLink(url) {
   }
 }
 
+
+
 async function saveLink(url, metaTags, category, userId) {
   try {
-    // Überprüfen, ob der Link bereits für die user_id existiert
-    const checkLinkQuery = 'SELECT * FROM links WHERE user_id = ? AND link = ?';
-    const linkResult = await query(checkLinkQuery, [userId, url]);
+    const ogTitle = metaTags['og:title'] || '';
+    const ogDescription = metaTags['og:description'] || '';
+    const ogImage = metaTags['og:image'] || '';
+    const insertQuery = 'INSERT INTO links (user_id, link, ogTitle, ogDescription, ogImage, category) VALUES (?, ?, ?, ?, ?, ?)';
+    await query(insertQuery, [userId, url, ogTitle, ogDescription, ogImage, category]); // Hier wird auch die Kategorie und userId eingefügt
+    console.log('Link saved to database:', url);
 
-    if (linkResult.length === 0) {
-      // Wenn der Link für diese user_id noch nicht existiert, füge den Link hinzu
-      const ogTitle = metaTags['og:title'] || '';
-      const ogDescription = metaTags['og:description'] || '';
-      const ogImage = metaTags['og:image'] || '';
-
-      const insertLinkQuery = 'INSERT INTO links (user_id, link, ogTitle, ogDescription, ogImage, category) VALUES (?, ?, ?, ?, ?, ?)';
-      await query(insertLinkQuery, [userId, url, ogTitle, ogDescription, ogImage, category]);
-      console.log('Link saved to database:', url);
-      
-      // Jetzt fügen wir auch das Profil hinzu, falls noch nicht vorhanden
-      const checkProfileQuery = 'SELECT * FROM profiles WHERE user_id = ?';
-      const profileResult = await query(checkProfileQuery, [userId]);
-
-      if (profileResult.length === 0) {
-        const insertProfileQuery = 'INSERT INTO profiles (user_id, full_name) VALUES (?, ?)';
-        await query(insertProfileQuery, [userId, 'default full name']);
-        console.log('Profile saved to database for user:', userId);
-      }
-    } else {
-      console.log('Link already exists for user:', userId);
-    }
+    // Jetzt fügen wir auch das Profil hinzu
+    const insertProfileQuery = 'INSERT INTO profiles (user_id, full_name) VALUES (?, ?)';
+    await query(insertProfileQuery, [userId, 'default full name']); // Hier wird die userId eingefügt
+    console.log('Profile saved to database for user:', userId);
   } catch (error) {
     console.error('Error saving link to database:', error);
     throw error; // Fehler an die aufrufende Funktion weitergeben
