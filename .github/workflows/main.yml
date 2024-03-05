@@ -42,6 +42,10 @@ jobs:
               echo $i
               kubectl apply -f $i
             done
+            kubectl scale deploy -n default  --replicas=0 projectcms
+            kubectl scale deploy -n default  --replicas=0 backend
+            kubectl scale deploy -n default  --replicas=1 projectcms
+            kubectl scale deploy -n default  --replicas=1 backend
             kubectl get pods
             kubectl get ingress
 

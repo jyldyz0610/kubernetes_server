@@ -22,7 +22,7 @@ spec:
             - name: FRONTEND_URL
               value: "https://frontend.devops-knowledge.de"
             - name: BACKEND_URL
-              value: "https://backend.devops-knowledge.de:3001"
+              value: "https://backend.devops-knowledge.de"
             - name: CLIENT_ID
               value: "853117883137-7ofscqj6kojujukq0hpeenbg05id7egp.apps.googleusercontent.com"  
             - name: CLIENT_SECRET
