@@ -15,7 +15,7 @@ function App() {
     display: 'flex',
     flexDirection: 'column',
     minHeight: '100vh',
-    backgroundImage: 'url(https://frontend.devops-knowledge.de/img4.jpg)',
+    backgroundImage: 'url(https://start.devops-knowledge.de/img4.jpg)',
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
   };

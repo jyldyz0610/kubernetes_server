@@ -31,7 +31,7 @@ const LatestLinks = () => {
             <p>{link.ogTitle}</p>
             <p><a href={link.link} target="_blank" rel="noopener noreferrer">{link.link}</a></p>
             <p>{link.category}</p>
-            <img src={link.ogImage} alt="Bild" style={{ width: '100px', height: '100px' }} />
+            <img src={link.ogImage} alt="Bild" style={{ width: '80px', height: '60px' }} />
           </div>
         ))}
       </div>
@@ -40,4 +40,5 @@ const LatestLinks = () => {
 };
 
 export default LatestLinks;
+
 

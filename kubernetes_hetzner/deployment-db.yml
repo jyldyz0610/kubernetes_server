@@ -15,7 +15,7 @@ spec:
       containers:
         - name: database
           image: jyldyz0610/database:latest
-          imagePullPolicy: Never
+          imagePullPolicy: Always
           ports:
             - containerPort: 3306
           env:
